@@ -8,3 +8,7 @@ if Fuyutsui.ClassBlocks then
         end
     end
 end
+-- 驱散宏（unit 0 直接对当前目标施放）
+if Fuyutsui.MacrosList then
+    Fuyutsui.MacrosList.staticSpells[41] = "清毒术"
+end

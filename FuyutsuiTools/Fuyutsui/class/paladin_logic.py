@@ -31,14 +31,13 @@ def run_paladin_logic(state_dict, spec_name):
         if current_step and "清毒术" in current_step and "目标" not in current_step:
             action_hotkey = None
             current_step = "无匹配技能"
-        # 目标类型
-        if current_step == "无匹配技能":
-            spells = state_dict.get("spells") or {}
-            清洁术CD = spells.get("清洁术", -1)
-            目标类型 = state_dict.get("目标类型", 0)
-            if 清洁术CD == 0 and 目标类型 in (12, 13, 15):
-                current_step = "施放 清毒术 on 目标"
-                action_hotkey = get_hotkey(0, "清毒术")
+        # 驱散当前目标
+        spells = state_dict.get("spells") or {}
+        清洁术CD = spells.get("清洁术", -1)
+        目标类型 = state_dict.get("目标类型", 0)
+        if 清洁术CD == 0 and 目标类型 in (12, 13, 15):
+            current_step = "施放 清毒术 on 目标"
+            action_hotkey = get_hotkey(0, "清毒术")
 
     return action_hotkey, current_step, unit_info
 

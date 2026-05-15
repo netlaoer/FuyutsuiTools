@@ -53,7 +53,7 @@ def import_with_override(module_name: str):
 
 
 def apply_overrides():
-    """Patch load_config：所有代码读取配置时自动包含覆盖字段"""
+    """Patch load_config / load_keymap：识别职业后首次调用时自动合并覆盖"""
     import utils
     import GetPixels
 
@@ -70,25 +70,77 @@ def apply_overrides():
 
     _patched_load_config._cache = {}
 
-    override_cfg = load_override_config()
-    if not override_cfg:
-        return
-
     utils.load_config = _patched_load_config
     GetPixels.load_config = _patched_load_config
-    class_names = {1: "战士", 2: "圣骑士", 3: "猎人", 4: "盗贼", 5: "牧师", 6: "死亡骑士",
-                  7: "萨满", 8: "法师", 9: "术士", 10: "武僧", 11: "德鲁伊", 12: "恶魔猎手", 13: "唤魔师"}
-    named_keys = [f"{class_names.get(k, k)}(ID:{k})" for k in override_cfg.keys()]
-    print(f"[FuyutsuiTools] 已加载覆盖配置: {named_keys}")
-    print(f"[FuyutsuiTools] 已加载覆盖模块: {[f.stem for f in _override_class_dir.glob('*_logic.py')]}")
+
+    # Patch load_keymap + select_keymap_for_class
+    original_load_keymap = utils.load_keymap
+    original_select_keymap = utils.select_keymap_for_class
+    override_keymap_dir = _override_base / "keymap"
+    if override_keymap_dir.is_dir():
+        def _patched_load_keymap():
+            if _patched_load_keymap._cache:
+                return _patched_load_keymap._cache
+            keymap = original_load_keymap()
+            km_name = Path(utils.KEYMAP_PATH).name
+            override_km = override_keymap_dir / km_name
+            if override_km.is_file():
+                import yaml
+                with open(override_km, "r", encoding="utf-8") as f:
+                    extra = yaml.safe_load(f) or []
+                if isinstance(extra, dict):
+                    extra = list(extra.values())
+                if extra:
+                    max_id = max((int(k) for k in keymap.keys() if str(k).isdigit()), default=0)
+                    for entry in extra:
+                        if isinstance(entry, dict):
+                            max_id += 1
+                            keymap[str(max_id)] = entry
+                    print(f"[FuyutsuiTools] 已合并 keymap 覆盖: {km_name} (+{len(extra)} 条)")
+            _patched_load_keymap._cache = keymap
+            return keymap
+
+        _patched_load_keymap._cache = None
+
+        def _patched_select_keymap(class_id, *args, **kwargs):
+            original_select_keymap(class_id, *args, **kwargs)
+            _patched_load_keymap._cache = None
+
+        utils.load_keymap = _patched_load_keymap
+        utils.select_keymap_for_class = _patched_select_keymap
+
+
+_CLASS_NAMES = {1: "战士", 2: "圣骑士", 3: "猎人", 4: "盗贼", 5: "牧师", 6: "死亡骑士",
+               7: "萨满", 8: "法师", 9: "术士", 10: "武僧", 11: "德鲁伊", 12: "恶魔猎手", 13: "唤魔师"}
+_printed = False
+
+
+def print_loaded_info():
+    """识别到职业后调用，打印覆盖加载信息（只打印一次）"""
+    global _printed
+    if _printed:
+        return
+    _printed = True
+    cfg = load_override_config()
+    if cfg:
+        named_keys = [f"{_CLASS_NAMES.get(k, k)}(ID:{k})" for k in cfg.keys()]
+        print(f"[FuyutsuiTools] 已加载覆盖配置: {named_keys}")
+    modules = [f.stem for f in _override_class_dir.glob('*_logic.py')]
+    if modules:
+        print(f"[FuyutsuiTools] 已加载覆盖模块: {modules}")
 
 
 def clear_merged_cache():
     """重载时清除合并缓存，使下次 load_config() 重新读取并合并"""
-    global _cached_override_config
+    global _cached_override_config, _printed
     _cached_override_config = None
+    _printed = False
     try:
         import utils
         utils.load_config._cache = {}
+        utils._keymap_cache = None
+        utils._unit_spell_to_hotkey_cache = None
+        if hasattr(utils.load_keymap, '_cache'):
+            utils.load_keymap._cache = None
     except Exception:
         pass
