@@ -3,20 +3,23 @@
 import importlib
 from utils import get_hotkey
 
+_orig_mod = importlib.import_module("class.paladin_logic")
+_orig_run = _orig_mod.run_paladin_logic
+
 # 特殊技能按键（不走keymap，直接按指定键）
 direct_key_map = {
     "制裁之锤": "x",
 }
 
-_orig_mod = importlib.import_module("class.paladin_logic")
-_orig_run = _orig_mod.run_paladin_logic
+# 替换原始模块的 get_hotkey，使制裁之锤走固定按键
+_orig_get_hotkey = _orig_mod.get_hotkey
 
-
-def get_action_hotkey(skill_name, unit=0):
-    """获取技能按键，特殊技能直接返回固定按键"""
+def _patched_get_hotkey(unit, skill_name):
     if skill_name in direct_key_map:
         return direct_key_map[skill_name]
-    return get_hotkey(unit, skill_name)
+    return _orig_get_hotkey(unit, skill_name)
+
+_orig_mod.get_hotkey = _patched_get_hotkey
 
 
 def run_paladin_logic(state_dict, spec_name):

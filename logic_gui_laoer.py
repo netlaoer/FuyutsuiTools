@@ -549,9 +549,9 @@ def create_gui():
     except Exception:
         pass
     root.title("神经链接控制台")
-    root.geometry("365x320")
+    root.geometry("365x350")
     # 窗口大小配置（正常 / 缩小）
-    normal_geometry = "365x320"
+    normal_geometry = "365x350"
     small_geometry = "365x160"
     # 从 JSON 恢复窗口位置
     _saved_state = _load_window_state()
