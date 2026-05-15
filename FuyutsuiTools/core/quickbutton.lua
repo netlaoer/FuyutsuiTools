@@ -101,6 +101,7 @@ function F:InitQuickToggleButton()
                 panelRelPoint = nil,
                 panelX = nil,
                 panelY = nil,
+                dispel = 1,
             }
         })
     end
@@ -269,6 +270,21 @@ function F:InitQuickToggleButton()
         setter = function(v)
             CharCfg().dpsMode = v and 1 or 0
             F:SwitchDpsMode()
+        end,
+    })
+
+    createSwitchButton({
+        name = "FuyutsuiDispelButton",
+        parent = panelFrame,
+        onText = "驱散",
+        offText = "驱散",
+        width = 60, height = 20,
+        anchor = { "LEFT", btnCD, "RIGHT", 0, -22 },
+        tip = "切换驱散开关",
+        getter = function() return (CharCfg().dispel or 1) == 1 end,
+        setter = function(v)
+            CharCfg().dispel = v and 1 or 0
+            F:SwitchDispel()
         end,
     })
 
