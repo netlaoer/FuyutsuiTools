@@ -65,13 +65,3 @@ FuyutsuiTools/
 ### Python 端（桌面端）
 - **配置合并**：monkey-patch `utils.load_config`，自动深度合并覆盖配置
 - **模块替换**：`import_with_override` 优先加载 Tools 目录下的同名逻辑模块
-
-## 扩展指南
-
-### 添加新职业逻辑覆盖
-
-在 `FuyutsuiTools/Fuyutsui/class/` 下创建同名 `_logic.py` 文件，覆盖引擎会自动加载：
-
-### 添加新配置项
-
-在 `FuyutsuiTools/Fuyutsui/config.yml` 中定义，会自动与父插件配置深度合并。
