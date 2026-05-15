@@ -52,7 +52,7 @@ FuyutsuiTools/
 │   └── Paladin.lua          # 圣骑士数据块扩展
 └── Fuyutsui/                # Python 端覆盖
     ├── overrides.py         # 覆盖加载引擎
-    ├── config.yml           # 配置深度合并
+    ├── config.yml           # 锚点覆盖合并
     └── class/
         └── paladin_logic.py # 圣骑士逻辑覆盖
 ```
