@@ -32,12 +32,13 @@ from GetPixels import get_info, scan_screen_data
 _override_base = Path(__file__).parent.parent.parent / "FuyutsuiTools" / "Fuyutsui"
 if (_override_base / "overrides.py").is_file():
     sys.path.insert(0, str(_override_base))
-    from overrides import import_with_override, apply_overrides, clear_merged_cache
+    from overrides import import_with_override, apply_overrides, clear_merged_cache, print_loaded_info
     apply_overrides()
     # 更新局部 load_config 引用（from utils import * 创建的是模块级绑定）
     import utils
     load_config = utils.load_config
     _clear_merged_cache = clear_merged_cache
+    _print_loaded_info = print_loaded_info
     del sys.path[0]
 
 # ── 职业模块：从 config.yml 自动构建映射 + class/ 目录扫描补充 ──
@@ -359,6 +360,11 @@ def _run_logic_loop():
                     config = load_config()
                     class_name, spec_name = get_class_and_spec_name(config, class_id, spec_id)
                     select_keymap_for_class(class_id)
+                    try:
+                        _print_loaded_info()
+                        utils.load_keymap()
+                    except Exception:
+                        pass
 
 
                 with _state_lock:
