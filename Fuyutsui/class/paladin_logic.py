@@ -24,19 +24,25 @@ _orig_mod.get_hotkey = _patched_get_hotkey
 
 def run_paladin_logic(state_dict, spec_name):
     """覆盖：驱散开关关闭时，抑制自动驱散（保留目标驱散）"""
+    驱散开关 = state_dict.get("驱散开关", 1)
+    removed_dispel = {}
+
+    # 驱散开关关闭时，临时移除 group 中的驱散字段，使原始逻辑跳过队友驱散
+    if 驱散开关 == 0:
+        group = state_dict.get("group") or {}
+        for key, data in group.items():
+            if isinstance(data, dict) and "驱散" in data:
+                removed_dispel[key] = data["驱散"]
+                del data["驱散"]
+
     action_hotkey, current_step, unit_info = _orig_run(state_dict, spec_name)
 
-    if state_dict.get("驱散开关", 1) == 0 and current_step and "清毒术" in current_step and "目标" not in current_step:
-        # 抑制队友驱散后，回退检查目标驱散条件
-        spells = state_dict.get("spells") or {}
-        清洁术CD = spells.get("清洁术", -1)
-        目标类型 = state_dict.get("目标类型", 0)
-        if 清洁术CD == 0 and 目标类型 in (12, 13, 15):
-            current_step = "施放 清毒术 on 目标"
-            action_hotkey = get_hotkey(0, "清毒术")
-        else:
-            action_hotkey = None
-            current_step = "无匹配技能"
+    # 恢复被移除的驱散字段
+    if removed_dispel:
+        group = state_dict.get("group") or {}
+        for key, val in removed_dispel.items():
+            if isinstance(group.get(key), dict):
+                group[key]["驱散"] = val
 
     return action_hotkey, current_step, unit_info
 
