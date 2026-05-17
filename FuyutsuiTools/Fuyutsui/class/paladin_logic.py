@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""FuyutsuiTools 覆盖：圣骑士逻辑（添加驱散开关支持 + 扩展功能）"""
+"""FuyutsuiTools 覆盖：圣骑士逻辑（驱散开关支持）"""
 import importlib
 from utils import get_hotkey
 
@@ -23,26 +23,22 @@ _orig_mod.get_hotkey = _patched_get_hotkey
 
 
 def run_paladin_logic(state_dict, spec_name):
-    """覆盖：驱散开关关闭时，无视 no_dispel_bosses 限制；神圣天赋用目标类型判断直接目标驱散"""
-    # 驱散开关关闭时，临时清空 no_dispel_bosses 使其不生效
-    orig_no_dispel = _orig_mod.no_dispel_bosses.copy()
-    if state_dict.get("驱散开关", 1) == 0:
-        _orig_mod.no_dispel_bosses = set()
+    """覆盖：驱散开关关闭时，抑制自动驱散（保留目标驱散）"""
     action_hotkey, current_step, unit_info = _orig_run(state_dict, spec_name)
-    _orig_mod.no_dispel_bosses = orig_no_dispel
 
-    if spec_name == "神圣" and state_dict.get("驱散开关", 1) == 0:
-        # 抑制原始的驱散单位自动驱散（只允许目标类型驱散）
-        if current_step and "清毒术" in current_step and "目标" not in current_step:
-            action_hotkey = None
-            current_step = "无匹配技能"
-        # 驱散当前目标
+    if state_dict.get("驱散开关", 1) == 0 and current_step and "清毒术" in current_step and "目标" not in current_step:
+        # 抑制队友驱散后，回退检查目标驱散条件
         spells = state_dict.get("spells") or {}
         清洁术CD = spells.get("清洁术", -1)
         目标类型 = state_dict.get("目标类型", 0)
         if 清洁术CD == 0 and 目标类型 in (12, 13, 15):
             current_step = "施放 清毒术 on 目标"
             action_hotkey = get_hotkey(0, "清毒术")
+        else:
+            action_hotkey = None
+            current_step = "无匹配技能"
 
     return action_hotkey, current_step, unit_info
+
+
 

@@ -1,14 +1,11 @@
 if UnitClassBase("player") ~= "PALADIN" then return end
 
--- 为所有圣骑士专精添加驱散开关像素块（index 47）
+-- 为所有圣骑士专精添加驱散开关像素块
 if Fuyutsui.ClassBlocks then
+    local steps = { [1] = 48, [2] = 51, [3] = 48 }
     for spec = 1, 3 do
         if Fuyutsui.ClassBlocks[spec] then
-            Fuyutsui.ClassBlocks[spec][47] = { type = "block", name = "驱散开关" }
+            Fuyutsui.ClassBlocks[spec][steps[spec]] = { type = "block", name = "驱散开关" }
         end
     end
-end
--- 驱散宏（unit 0 直接对当前目标施放）
-if Fuyutsui.MacrosList then
-    Fuyutsui.MacrosList.staticSpells[41] = "清毒术"
 end
