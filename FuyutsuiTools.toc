@@ -1,0 +1,12 @@
+## Interface: 120000, 120001, 120005
+## Title: Fuyutsui|cFFC79C6E Tools|r
+## Version: 0.0.1
+## Author: Wayne Bian
+## Dependencies: Fuyutsui
+## Notes: Fuyutsui 功能扩展与职业数据覆盖模块
+
+init.lua
+core\core.lua
+class\Paladin.lua
+core\config.lua
+core\quickbutton.lua
