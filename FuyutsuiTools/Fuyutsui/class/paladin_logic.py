@@ -23,8 +23,13 @@ _orig_mod.get_hotkey = _patched_get_hotkey
 
 
 def run_paladin_logic(state_dict, spec_name):
-    """覆盖：驱散开关关闭时，神圣天赋用目标类型判断直接目标驱散"""
+    """覆盖：驱散开关关闭时，无视 no_dispel_bosses 限制；神圣天赋用目标类型判断直接目标驱散"""
+    # 驱散开关关闭时，临时清空 no_dispel_bosses 使其不生效
+    orig_no_dispel = _orig_mod.no_dispel_bosses.copy()
+    if state_dict.get("驱散开关", 1) == 0:
+        _orig_mod.no_dispel_bosses = set()
     action_hotkey, current_step, unit_info = _orig_run(state_dict, spec_name)
+    _orig_mod.no_dispel_bosses = orig_no_dispel
 
     if spec_name == "神圣" and state_dict.get("驱散开关", 1) == 0:
         # 抑制原始的驱散单位自动驱散（只允许目标类型驱散）
