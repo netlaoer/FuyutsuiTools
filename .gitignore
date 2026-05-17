@@ -1,0 +1,10 @@
+# 忽略 VS Code 的本地配置
+.vscode/
+.claude/
+
+# 忽略 Python 的缓存文件
+Fuyutsui/__pycache__/
+*.pyc
+
+# 忽略.md
+README.md
