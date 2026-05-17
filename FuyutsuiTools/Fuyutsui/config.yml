@@ -1,5 +1,3 @@
 2:
   1:
     驱散开关: {step: 48, type: "int"}
-  3:
-    驱散开关: {step: 48, type: "int"}
