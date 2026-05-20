@@ -100,7 +100,6 @@ FuyutsuiTools/
 ├── main.lua              # 覆盖 OnUpdate，血量高频轮询（0.2秒，团本除外）
 ├── logic_gui_laoer.py    # 独立 GUI 入口（需放入主插件 Fuyutsui/Fuyutsui/ 目录使用）
 ├── README.md             # 项目说明
-├── ARCHITECTURE.md       # 本文档
 │
 ├── core/
 │   ├── core.lua          # 驱散开关（SwitchDispel、updatePlayerConfig 覆盖）
@@ -772,12 +771,12 @@ def run_paladin_logic(state_dict, spec_name):
 
 | 步骤 | 说明 |
 |------|------|
-| 1 | 读 ARCHITECTURE.md 了解完整架构 |
+| 1 | 读 README.md 了解完整架构 |
 | 2 | 确定是纯 Lua 功能还是需要 Lua + Python 双端配合 |
 | 3 | 纯 Lua：按覆盖模板写代码，放入对应文件（帧相关→main.lua，初始化→init.lua，开关→core/core.lua） |
 | 4 | 双端：Lua 端添加像素块编码，Python 端在 `overrides.py` 注册覆盖模块 |
 | 5 | 更新 `FuyutsuiTools.toc`（如新增文件） |
-| 6 | 更新本 ARCHITECTURE.md 对应章节 |
+| 6 | 更新本 README.md 对应章节 |
 
 ### 常见陷阱
 
