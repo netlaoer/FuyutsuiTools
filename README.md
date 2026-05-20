@@ -2,8 +2,8 @@
 
 **Fuyutsui 的功能扩展与数据覆盖模块**
 
-<!-- AI_INSTRUCTION: 在修改此项目任何代码之前，请完整阅读本文件，了解架构、所有函数、编码约定和开发规范 -->
-<!-- AI: Before making any changes to this project, read this entire file first for the full architecture, API reference, and development guidelines -->
+<!-- AI_INSTRUCTION: 在修改此项目任何代码之前，请完整阅读本文件，了解架构、所有函数、编码约定和开发规范。完成代码修改后，必须同步更新本文件中对应的章节（函数列表、文件结构、数据结构等），保持文档与代码一致。 -->
+<!-- AI: Before making any changes to this project, read this entire file first. After completing code changes, you MUST update the corresponding sections in this file (function lists, file structure, data structures, etc.) to keep documentation in sync with code. -->
 
 > 用户使用说明：[使用说明.md](使用说明.md)
 
