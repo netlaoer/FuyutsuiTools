@@ -422,7 +422,7 @@ char = { level, aoeMode(0=自动/1=单体), cooldowns(爆发), dpsMode(0=官方�
 |------|------|
 | `_build_class_module_map()` | 从 config.yml + class/ 目录构建职业ID→模块名映射 |
 | `_load_logic_module(name)` | 从缓存获取模块中的逻辑函数 |
-| `reload_logic_modules()` | 热重载所有逻辑模块 |
+| `reload_logic_modules()` | 热重载所有逻辑模块（先 `reload` 主插件原始模块，再重载覆盖模块） |
 | `_default_logic(state_dict, spec_name)` | 默认空逻辑（无匹配职业时使用） |
 | `_get_config_cached()` | 缓存加载 config.yml |
 | `get_group_config_for_class_spec(class_id, spec_id)` | 获取队伍表格配置 |

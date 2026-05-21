@@ -125,9 +125,14 @@ def reload_logic_modules():
         # 重新构建映射
         _build_class_module_map()
 
-        # 重新导入所有已知模块（覆盖模块通过 _import_with_override 重新加载）
+        # 先 reload 主插件原始模块（sys.modules 中的缓存），再通过 _import_with_override 重新加载覆盖模块
         for name in list(_logic_modules.keys()):
             try:
+                # reload 主插件原始模块，确保覆盖模块 import 的是最新代码
+                orig_name = f"class.{name}"
+                if orig_name in sys.modules:
+                    importlib.reload(sys.modules[orig_name])
+                # 通过覆盖机制重新加载（覆盖模块会重新 import 原始模块拿到 reload 后的引用）
                 _logic_modules[name] = _import_with_override(name)
             except Exception:
                 _logic_modules[name] = None
